@@ -1,14 +1,17 @@
 package devices.configuration.device;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 record Location(
-        String street, String houseNumber,
-        String city, String postalCode,
-        String state, String country,
-        Coordinates coordinates) {
+        @NotBlank String street, @NotBlank String houseNumber,
+        @NotBlank String city, @NotBlank String postalCode,
+        String state, @NotBlank String country,
+        @Valid Coordinates coordinates) {
 
-    record Coordinates(BigDecimal longitude,
-                       BigDecimal latitude) {
+    record Coordinates(@NotNull BigDecimal longitude,
+                       @NotNull BigDecimal latitude) {
     }
 }
