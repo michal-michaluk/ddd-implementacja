@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,7 +19,6 @@ class DevicesController {
     private final DeviceRepository repository;
     private final DeviceService service;
 
-    @Transactional(readOnly = true)
     @GetMapping(path = "/devices", params = {"page", "size"},
             produces = APPLICATION_JSON_VALUE)
     Page<DeviceSnapshot> get(Pageable pageable) {
@@ -28,7 +26,6 @@ class DevicesController {
                 .map(Device::toSnapshot);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping(path = "/devices/{deviceId}",
             produces = APPLICATION_JSON_VALUE)
     Optional<DeviceSnapshot> get(@PathVariable String deviceId) {
