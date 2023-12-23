@@ -62,11 +62,11 @@ record OpeningHours(
         }
 
         static OpeningTime closed24h() {
-            return new Opened24h();
+            return new Closed24h();
         }
 
         static OpeningTime opened24h() {
-            return new Closed24h();
+            return new Opened24h();
         }
 
         static OpeningTime opened(int open, int close) {

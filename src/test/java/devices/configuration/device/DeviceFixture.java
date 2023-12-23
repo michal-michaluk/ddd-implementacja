@@ -6,7 +6,6 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class DeviceFixture {
@@ -17,14 +16,13 @@ public class DeviceFixture {
 
     @NotNull
     public static Device givenDevice() {
-        return new Device(
-                randomId(),
-                new ArrayList<>(),
-                ownership(),
-                location(),
-                OpeningHours.alwaysOpened(),
-                Settings.defaultSettings()
-        );
+        Device device = Device.newDevice(randomId());
+        device.assignTo(ownership());
+        device.updateLocation(location());
+        device.updateOpeningHours(OpeningHours.alwaysOpened());
+        device.updateSettings(Settings.defaultSettings());
+        device.clearEvents();
+        return device;
     }
 
     @NotNull

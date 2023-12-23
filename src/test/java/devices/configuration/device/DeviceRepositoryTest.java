@@ -1,42 +1,31 @@
 package devices.configuration.device;
 
 import devices.configuration.IntegrationTest;
-import devices.configuration.JsonAssert;
-import devices.configuration.device.DomainEvent.LocationUpdated;
-import devices.configuration.device.DomainEvent.OwnershipUpdated;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static devices.configuration.JsonAssert.assertThat;
 import static devices.configuration.TestTransaction.transactional;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @IntegrationTest
 @Transactional
-@RecordApplicationEvents
-class DeviceDocumentWithHistoryRepositoryTest {
+class DeviceRepositoryTest {
 
     @Autowired
-    DeviceDocumentWithHistoryRepository repository;
-
-    @Autowired
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    private ApplicationEvents emitted;
+    DeviceRepository repository;
 
     @Test
     void saveAndGetDevice() {
-        Device saved = DeviceFixture.givenStepByStepConfiguredDevice();
+        Device saved = DeviceFixture.givenDevice();
         transactional(() -> repository.save(saved));
-        Optional<Device> read = transactional(() -> repository.get(saved.deviceId));
+        Optional<Device> read = transactional(() -> repository.findById(saved.getDeviceId()));
 
-        JsonAssert.assertThat(read).isExactlyLike("""
+        assertThat(read).isExactlyLike(saved);
+        assertThat(read.map(Device::toDeviceConfiguration)).hasFieldsLike("""
                 {
-                  "deviceId": "%s",
-                  "events": [],
                   "ownership": {
                     "operator": "Devicex.nl",
                     "provider": "public-devices"
@@ -65,20 +54,6 @@ class DeviceDocumentWithHistoryRepositoryTest {
                     "publicAccess": false
                   }
                 }
-                """, saved.deviceId);
-    }
-
-    @Test
-    void emitsDomainEvents() {
-        Device saved = DeviceFixture.givenStepByStepConfiguredDevice();
-        transactional(() -> repository.save(saved));
-
-        assertThat(emitted.stream(DomainEvent.class))
-                .containsExactly(
-                        new OwnershipUpdated(saved.deviceId, DeviceFixture.ownership()),
-                        new LocationUpdated(saved.deviceId, DeviceFixture.location())
-                );
-        assertThat(emitted.stream(DeviceConfiguration.class))
-                .containsExactly(saved.toDeviceConfiguration());
+                """);
     }
 }

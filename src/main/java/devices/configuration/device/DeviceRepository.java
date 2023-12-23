@@ -1,10 +1,7 @@
 package devices.configuration.device;
 
-import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-interface DeviceRepository {
+interface DeviceRepository extends JpaRepository<Device, String> {
 
-    Optional<Device> get(String deviceId);
-
-    void save(Device device);
 }
