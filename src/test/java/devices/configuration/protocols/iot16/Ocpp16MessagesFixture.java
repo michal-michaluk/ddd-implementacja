@@ -1,8 +1,10 @@
 package devices.configuration.protocols.iot16;
 
+import devices.configuration.intervals.DeviceInfo;
+
 public class Ocpp16MessagesFixture {
 
-    public BootNotificationRequest bootNotification() {
+    public static BootNotificationRequest bootNotification() {
         return new BootNotificationRequest(
                 "Garo",
                 "CPF25 Family",
@@ -15,4 +17,14 @@ public class Ocpp16MessagesFixture {
                 "937462A48276"
         );
     }
+
+    public static DeviceInfo deviceInfoMatchingExample() {
+        return new DeviceInfo(
+                "EVB-P4562137",
+                "Garo",
+                "CPF25 Family",
+                "1.1"
+        );
+    }
+
 }
