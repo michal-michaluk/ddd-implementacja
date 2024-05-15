@@ -23,10 +23,11 @@ class Device {
     }
 
     void assignTo(Ownership ownership) {
-        Objects.requireNonNull(ownership);
+        ownership = Objects.requireNonNullElse(ownership, Ownership.unowned());
         if (ownership.isUnowned()) {
             resetConfiguration();
         }
+        ensureOperatorIsNotSwitched(ownership);
         this.ownership = ownership;
     }
 
@@ -48,6 +49,12 @@ class Device {
     void updateSettings(Settings settings) {
         Objects.requireNonNull(settings);
         this.settings = this.settings.merge(settings);
+    }
+
+    private void ensureOperatorIsNotSwitched(Ownership ownership) {
+        if (!this.ownership.isUnowned() && !Objects.equals(this.ownership.operator(), ownership.operator())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private Violations checkViolations() {
